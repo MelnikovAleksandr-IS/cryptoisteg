@@ -1,2 +1,2 @@
-# cryptoisteg
-repository dlya praktik po cryptographyi i steganographyi
+# Криптография и стеганография
+Репозиторий для практик по предмету и отчетов к ним
