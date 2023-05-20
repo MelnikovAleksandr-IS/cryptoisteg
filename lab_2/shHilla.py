@@ -18,4 +18,14 @@ inv = inv.astype(int)
 
 def shHilla(message, key, n):
   mesbls = [message[i:i+n] for i in range(0, len(message), n)]
+  cip = ""
+  for mesbl in mesbls:
+    if len(mesbl) < n:
+      mesbl += "Z"*(n-len(mesbl))
+    mesbl = [bukvn(elm) for elm in mesbl]
+    mesbl = np.array(mesbl).reshape((n, 1))
+    res = np.mod(np.dot(keym, mesbl), 26)
+    res = res.flatten().tolist()
+    cip += "".join([numbkv(elm) for elm in res])
+  return cip
   
