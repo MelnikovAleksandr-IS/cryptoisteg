@@ -6,11 +6,8 @@ def shvijenerssklpotxt(message, key):
     for i in range(len(message)):
         elm = message[i]
         if elm.isalpha():
-            sdvig = ord(key[i]) - ord('a')
-            if elm.isupper():
-                cip += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
-            else:
-                cip += chr((ord(elm) - ord('a') + sdvig) % 26 + ord('a'))
+            sdvig = ord(key[i]) - ord('A')
+            cip += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
             key += cip[-1]
         else:
             cip += elm
