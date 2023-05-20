@@ -10,10 +10,10 @@ def numbkv(elm):
   return chr(elm + ord('A'))
 
 keym = np.random.randint(0, 26, size=(size, size))
-while np.linalg.det(key) == 0:
+while np.linalg.det(keym) == 0:
   keym = np.random.randint(0, 26, size=(size, size))
-inv = np.linalg.inv(key)
-key = key.astype(int)
+inv = np.linalg.inv(keym)
+keym = keym.astype(int)
 inv = inv.astype(int)
 
 def shHilla(message, key, n):
@@ -28,4 +28,3 @@ def shHilla(message, key, n):
     res = res.flatten().tolist()
     cip += "".join([numbkv(elm) for elm in res])
   return cip
-  
