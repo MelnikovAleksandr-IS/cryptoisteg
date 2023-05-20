@@ -1,5 +1,5 @@
-message1 = 'Why do you want me to pass?'
-key1 = 'Kirillitsa'
+message1 = 'WHYDOYOUWANT'
+key1 = 'ABC'
 
 def shvijenerssklpotxt(message, key):
     cip = ''
@@ -18,15 +18,12 @@ def decshvijenerssklpotxt(cip, key):
     for i in range(len(cip)):
         elm = cip[i]
         if elm.isalpha():
-            sdvig = ord(key[i]) - ord('a')
-            if elm.isupper():
-                ormessage += chr((ord(elm) - ord('A') - sdvig) % 26 + ord('A'))
-            else:
-                ormessage += chr((ord(elm) - ord('a') - sdvig) % 26 + ord('a'))
+            sdvig = ord(key[i]) - ord('A')
+            ormessage += chr((ord(elm) - ord('A') - sdvig) % 26 + ord('A'))
             key += cip[i]
         else:
             ormessage += elm
     return ormessage
   
 cip = shvijenerssklpotxt(message1, key1)
-print(cip, decshvijenerssklpotxt(cip, key1))
+print(cip)
