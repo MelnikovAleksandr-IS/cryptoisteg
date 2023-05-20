@@ -1,5 +1,5 @@
-message1 = 'Why do you want me to pass?'
-key1 = 'Kirillitsa'
+message1 = 'WHYDO YOU WANT'
+key1 = 'ABC'
 
 
 def shvijenerspkl(message, key):
@@ -8,11 +8,8 @@ def shvijenerspkl(message, key):
     for i in range(len(message)):
         elm = message[i]
         if elm.isalpha():
-            sdvig = ord(key[i]) - ord('a')
-            if elm.isupper():
-                cip += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
-            else:
-                cip += chr((ord(elm) - ord('a') + sdvig) % 26 + ord('a'))
+            sdvig = ord(key[i]) - ord('A')
+            cip += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
         else:
             cip += elm
     return cip
@@ -23,11 +20,8 @@ def decshvijenerspkl(cipmessage, key):
     for i in range(len(cipmessage)):
         elm = cipmessage[i]
         if elm.isalpha():
-            sdvig = ord('a') - ord(key[i])
-            if elm.isupper():
-                ormessage += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
-            else:
-                ormessage += chr((ord(elm) - ord('a') + sdvig) % 26 + ord('a'))
+            sdvig = ord('A') - ord(key[i])
+            ormessage += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
         else:
             ormessage += elm
     return ormessage
