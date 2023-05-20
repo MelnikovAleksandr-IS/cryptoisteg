@@ -4,7 +4,7 @@
 
 
 
-Отчеты в Google doc:
+Отчеты в Google disk:
 - https://drive.google.com/
 - https://drive.google.com/
 - https://drive.google.com/
