@@ -41,4 +41,4 @@ def decshHilla(cipmessage, inv, n):
     ormessage += "".join([numbkv(elm) for elm in res])
 
 cip = shHilla('HELLO', keym, size)
-print(cip, decshHilla(cip, invm, size
+print(cip, decshHilla(cip, invm, size))
