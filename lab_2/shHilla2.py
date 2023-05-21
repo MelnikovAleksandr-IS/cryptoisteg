@@ -10,7 +10,7 @@ def bukvn(elm):
 def numbkv(elm):
   return chr(elm + ord('A'))
 
-keym = np.random.randint(0, 26, size=(size, size))
+keym = np.array([[2, 5], [3, 8]])
 while np.linalg.det(keym) == 0:
   keym = np.random.randint(0, 26, size=(size, size))
 invm = np.linalg.inv(keym)
