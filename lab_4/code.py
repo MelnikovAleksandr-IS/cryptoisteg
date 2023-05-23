@@ -8,7 +8,11 @@ def bin_to_char(binary): # Функция для получения символ
     return chr(int(binary, 2))
 
 def get_bit(number, index): # Функция для получения бита из двоичного представления числа
-    return (number >> index) & 1
+    binary = str(number)
+    if index >= len(binary): # если индекс больше длины строки, то бита с таким индексом нет
+        return None
+    else:
+        return int(binary[-(index+1)]) 
 
 def set_bit(number, index, bit):
     binary = bin(number)[2:].zfill(32)  # Переводим число в двоичную систему счисления и дополняем нулями до 32 символов
