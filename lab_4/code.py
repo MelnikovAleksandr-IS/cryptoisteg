@@ -10,9 +10,12 @@ def bin_to_char(binary): # Функция для получения символ
 def get_bit(number, index): # Функция для получения бита из двоичного представления числа
     return (number >> index) & 1
 
-def set_bit(number, index, bit): # Функция для установки бита в двоичном представлении числа
-    mask = 1 << index
-    return (number & ~mask) | (bit << index)
+def set_bit(number, index, bit):
+    binary = bin(number)[2:].zfill(32)  # Переводим число в двоичную систему счисления и дополняем нулями до 32 символов
+    binary_list = list(binary)  # Преобразуем строку в список символов
+    binary_list[-index-1] = str(bit)  # Устанавливаем заданный бит
+    binary = ''.join(binary_list)  # Преобразуем список обратно в строку
+    return int(binary, 2)
 
 def embed_message(image_path, message): # Функция для внедрения сообщения в изображение
     image = Image.open(image_path)
@@ -50,3 +53,40 @@ def extract_message(image_path): # Функция для извлечения с
     for i in range(0, len(binary_message), 8): # Преобразуем бинарное сообщение в символьный формат
         message += bin_to_char(binary_message[i:i+8])
     return message
+
+
+
+
+
+
+
+
+
+
+def MSE(N, M, l, pb, pa):
+    p1 = 1 / (N * M)
+    p2 = 0
+    for i in range(0, l):
+        if i + 1 > len(pa):
+            r = 0
+        else:
+            r = (pb[i] - pa[i]) **2
+        p2 += r
+    res = p1 * p2
+    return res
+
+def PSNR(Mse):
+    res = 10 * ((255 ** 2) / Mse)
+    return res
+
+def RMSE(Mse):
+    res = sqrt(Mse)
+    return res
+
+def EC(l, N, M):
+    res = l / (N * M)
+    return res
+
+def BER(b, bosh):
+    res = bosh / b
+    return res
