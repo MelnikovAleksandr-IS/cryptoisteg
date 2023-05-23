@@ -1,4 +1,5 @@
 from PIL import Image
+from math import sqrt
 
 
 def char_to_bin(char): # Функция для получения двоичного представления символа
