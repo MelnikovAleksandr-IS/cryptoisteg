@@ -3,10 +3,11 @@ import math
 
 
 ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+shABC = 'ZYXWVUTSRQPONMLKJIHGFEDCBA'
 key23andetc = []
 key13andetc = []
 
-def shprz(message, shABC):
+def shprz(message):
     '''
     Шифр простой замены (1)
     '''
@@ -18,7 +19,7 @@ def shprz(message, shABC):
             cip += i
     return cip
 
-def dec_shprz(cip, shABC):
+def dec_shprz(cip):
     '''
     Расшифровка (1)
     '''
@@ -98,3 +99,7 @@ def dec_affsh_rec(cip, key1, key2, key12, key22):
         if cip[i] in ABC:
             message += ABC[(deckey11andetc[i] * (ABC.index(cip[i]) - key23andetc[i])) % len(ABC)]
     return message
+
+print(shprz('HELLO'), "-", dec_shprz(shprz('HELLO')))
+print(affsh('HELLO', 1, 4), "-", dec_affsh(affsh('HELLO', 1, 4), 1, 4))
+print(affsh_rec('HELLO', 1, 4, 3, 2), "-", dec_affsh_rec(affsh_rec('HELLO', 1, 4, 3, 2), 1, 4, 3, 2))
