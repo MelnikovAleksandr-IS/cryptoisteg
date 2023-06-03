@@ -1,17 +1,20 @@
 message1 = 'WHYDOYOUWANT'
 key1 = 'ABC'
+while len(key1) < len(message1):
+    for i in range(len(message1)):
+        key1 += message1[i]
 
 def shvijenerssklpotxt(message, key):
     cip = ''
     for i in range(len(message)):
-        elm = message[i]
-        if elm.isalpha():
-            sdvig = ord(key[i]) - ord('A')
-            cip += chr((ord(elm) - ord('A') + sdvig) % 26 + ord('A'))
-            key += cip[-1]
-        else:
-            cip += elm
-    return cip       
+        cip += chr(((ord(message[i]) - 65) + (ord(key[i]) - 65)) % 26 + 65)
+    return cip
+
+def decshvijenerssklpotxt(cip, key):
+    ormessage = ''
+    for i in range(len(cip)):
+        ormessage += chr(((ord(cip[i]) - 65) - (ord(key[i]) - 65)) % 26 +65)
+    return ormessage
   
 cip = shvijenerssklpotxt(message1, key1)
-print(cip)
+print(cip, decshvijenerssklpotxt(cip, key1))
