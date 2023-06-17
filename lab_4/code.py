@@ -1,97 +1,132 @@
 from PIL import Image
+import numpy
+from copy import deepcopy
 from math import sqrt
 
+message = '110100001001110011010000101110001101000010111101110100001011100000101101110100001011111111010000101110001101000010110011'
 
-def char_to_bin(char): # Функция для получения двоичного представления символа
-    return bin(ord(char))[2:].zfill(8)
+def MSE(n, m, l, p_before, p_after):
+    p_1 = 1 / (n * m)
 
-def bin_to_char(binary): # Функция для получения символа из двоичного представления
-    return chr(int(binary, 2))
-
-def get_bit(number, index): # Функция для получения бита из двоичного представления числа
-    binary = str(number)
-    if index >= len(binary): # если индекс больше длины строки, то бита с таким индексом нет
-        return None
-    else:
-        return int(binary[-(index+1)]) 
-
-def set_bit(number, index, bit):
-    binary = bin(number)[2:].zfill(32)  # Переводим число в двоичную систему счисления и дополняем нулями до 32 символов
-    binary_list = list(binary)  # Преобразуем строку в список символов
-    binary_list[-index-1] = str(bit)  # Устанавливаем заданный бит
-    binary = ''.join(binary_list)  # Преобразуем список обратно в строку
-    return int(binary, 2)
-
-def embed_message(image_path, message): # Функция для внедрения сообщения в изображение
-    image = Image.open(image_path)
-    pixels = image.load()
-    width, height = image.size
-    binary_message = ''.join([char_to_bin(char) for char in message]) # Преобразуем сообщение в бинарный формат
-    if len(binary_message) > width * height: # Проверяем, что сообщение можно внедрить в изображение
-        raise ValueError('Сообщение слишком длинное для данного изображения')
-    index = 0
-    for y in range(height): # Внедряем сообщение в изображение
-        for x in range(width):
-            if index < len(binary_message):
-                pixel = pixels[x, y]
-                r, g, b = pixel
-                r_bit = get_bit(r, 0) # Получаем младший бит красной компоненты
-                message_bit = int(binary_message[index]) # Получаем значение бита из сообщения
-                if r_bit != message_bit: # Если значения не совпадают, меняем младший бит красной компоненты
-                    r = set_bit(r, 0, message_bit)
-                pixels[x, y] = (r, g, b)
-                index += 1
-    image.save('embedded.png') # Сохраняем изображение с внедренным сообщением
-
-def extract_message(image_path): # Функция для извлечения сообщения из изображения
-    image = Image.open(image_path)
-    pixels = image.load()
-    width, height = image.size
-    binary_message = ''
-    for y in range(height):  # Извлекаем сообщение из изображения
-        for x in range(width):
-            pixel = pixels[x, y]
-            r, g, b = pixel
-            r_bit = get_bit(r, 0) # Получаем младший бит красной компоненты
-            binary_message += str(r_bit) # Добавляем значение бита в сообщение
-    message = ''
-    for i in range(0, len(binary_message), 8): # Преобразуем бинарное сообщение в символьный формат
-        message += bin_to_char(binary_message[i:i+8])
-    return message
-
-
-
-
-
-
-
-
-
-
-def MSE(N, M, l, pb, pa):
-    p1 = 1 / (N * M)
-    p2 = 0
+    p_2 = 0
     for i in range(0, l):
-        if i + 1 > len(pa):
-            r = 0
+        r = (p_before[i] - p_after[i]) **2
+        p_2 += r
+    
+    result = p_1 * p_2
+    return result
+
+def PSNR(mse):
+    result = 10 * ((255 ** 2) / mse)
+    return result
+
+def RMSE(mse):
+    result = sqrt(mse)
+    return result
+
+def BER(b, b_er):
+    result = b_er / b
+    return result
+
+def rgb_to_hex(r,g,b):
+    return "#{:02x}{:02x}{:02x}".format(r,g,b)
+
+def hex_to_dec(hex):
+    return int(hex[1:], 16)
+
+def dec_to_hex(dec):
+    return hex(dec)[2:]
+
+def hex_to_rgb(hex):
+    while len(hex) < 6:
+        hex += '0'
+    return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+
+
+def to_img(path, m, q):
+    img = Image.open(path).convert('RGB')
+    width, height = img.size
+    pixels_rgb = list(img.getdata())
+    pixels_dec = []
+
+    for p in pixels_rgb:
+        pixels_dec.append(hex_to_dec(rgb_to_hex(p[0], p[1], p[2])))
+
+    original_pixels_dec = deepcopy(pixels_dec)
+
+    for i in range(0, len(m)):
+        new_pixel_in_dec = int((q * (pixels_dec[i] // q)) + ((q / 2) * int(m[i])))
+        pixels_dec[i] = new_pixel_in_dec
+        new_pixel_in_rgb = hex_to_rgb(dec_to_hex(new_pixel_in_dec))
+        pixels_rgb[i] = new_pixel_in_rgb
+
+    pixels = []
+
+    for j in range(0, len(pixels_rgb), width):
+        pixels.append(deepcopy(pixels_rgb[j:j+width]))
+
+
+    pixels_array = numpy.array(pixels, dtype=numpy.uint8)
+    new_image = Image.fromarray(pixels_array)
+    new_image.save(path[:-4] + '_new.png')
+
+    mse = MSE(width, height, len(pixels_dec), original_pixels_dec, pixels_dec)
+    psnr = PSNR(mse)
+    rmse = RMSE(mse)
+
+    results = {
+        'mse': mse,
+        'psnr': psnr,
+        'rmse': rmse,
+    }
+
+    return results
+
+
+
+def from_img(path, q, l):
+    global message
+
+    img = Image.open(path)
+    pixels_rgb = list(img.getdata())
+    pixels_dec = []
+
+    for p in pixels_rgb:
+        pixels_dec.append(hex_to_dec(rgb_to_hex(p[0], p[1], p[2])))
+
+    result = ''
+
+    for i in range(0, l):
+        trying_to_add_zero = (q * (pixels_dec[i] // q)) + ((q / 2) * 0)
+        trying_to_add_one = (q * (pixels_dec[i] // q)) + ((q / 2) * 1)
+
+        if abs(pixels_dec[i] - trying_to_add_zero) > abs(pixels_dec[i] - trying_to_add_one):
+            result += '1'
         else:
-            r = (pb[i] - pa[i]) **2
-        p2 += r
-    res = p1 * p2
-    return res
+            result += '0'
 
-def PSNR(Mse):
-    res = 10 * ((255 ** 2) / Mse)
-    return res
+    return result
 
-def RMSE(Mse):
-    res = sqrt(Mse)
-    return res
 
-def EC(l, N, M):
-    res = l / (N * M)
-    return res
+to_img("icon.png", message[:100], 100)
 
-def BER(b, bosh):
-    res = bosh / b
-    return res
+new_message = from_img("icon_new.png", 100, len(message[:100]))
+
+nez = to_img("icon.png", message[:100], 100)
+for i in nez:
+  print(i + " " + str(nez[i]))
+
+count = 0
+m_n = list(message[:100])
+for q in range(0, len(message[:100])):
+  if (message[q] != new_message[q]):
+    count += 1
+
+ber = BER(len(message), count)
+
+print('ber: ' + str(ber))
+print('Неправильно извлеченных бит: ' + str(count))
+
+if (message[:100] == new_message):
+    print(1)
+print(new_message)
